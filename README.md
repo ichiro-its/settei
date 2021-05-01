@@ -1,0 +1,2 @@
+# settei
+Configuration server project
