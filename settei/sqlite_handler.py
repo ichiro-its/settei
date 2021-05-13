@@ -1,0 +1,51 @@
+# Copyright (c) 2021 ICHIRO ITS
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+
+import sqlite3
+from datetime import datetime
+
+
+class sqlite_handler():
+    def __init__(self, database):
+        self.connection = sqlite3.connect(database)
+        self.cursor = self.connection.cursor()
+
+    def table_exists(self, table: str) -> bool:
+        self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+                            (table,))
+        return len(self.cursor.fetchall()) > 0
+
+    def load(self, table: str) -> any:
+        if self.table_exists(table):
+            self.cursor.execute(f"SELECT * FROM {table} ORDER BY created_at DESC LIMIT 1")
+            return self.cursor.fetchall()
+
+        return None
+
+    def save(self, table: str, config: str):
+        if not self.table_exists(table):
+            self.cursor.execute(f'''CREATE TABLE {table} (created_at DATETIME PRIMARY KEY,
+             json TEXT)''')
+
+        time = datetime.now().strftime("%B %d, %Y %I:%M:%S%p")
+        self.cursor.execute(f"INSERT INTO {table}(created_at, json) VALUES(?, ?)", (time, config,))
+
+        self.connection.commit()
