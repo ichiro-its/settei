@@ -19,33 +19,29 @@
 # THE SOFTWARE.
 
 
-import sqlite3
-from datetime import datetime
+from sqlite3 import Connection, Cursor, connect
+from typing import Union
 
 
-class sqlite_handler():
+class SqliteHandler():
     def __init__(self, database):
-        self.connection = sqlite3.connect(database)
-        self.cursor = self.connection.cursor()
+        self.connection: Connection = connect(database)
+        self.cursor: Cursor = self.connection.cursor()
 
-    def table_exists(self, table: str) -> bool:
-        self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?",
-                            (table,))
-        return len(self.cursor.fetchall()) > 0
+    def load(self, table: str) -> Union[str, None]:
+        try:
+            self.cursor.execute(f'SELECT * FROM {table} ORDER BY created_at DESC')
 
-    def load(self, table: str) -> any:
-        if self.table_exists(table):
-            self.cursor.execute(f"SELECT * FROM {table} ORDER BY created_at DESC LIMIT 1")
-            return self.cursor.fetchall()
+            return self.cursor.fetchone()
+        except Exception as e:
+            print('Exception: {}'.format(e))
 
-        return None
+    def save(self, table: str, config: str) -> None:
+        self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table} (
+                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP PRIMARY KEY,
+                                json TEXT NOT NULL)''')
 
-    def save(self, table: str, config: str):
-        if not self.table_exists(table):
-            self.cursor.execute(f'''CREATE TABLE {table} (created_at DATETIME PRIMARY KEY,
-             json TEXT)''')
-
-        time = datetime.now().strftime("%B %d, %Y %I:%M:%S%p")
-        self.cursor.execute(f"INSERT INTO {table}(created_at, json) VALUES(?, ?)", (time, config,))
+        self.cursor.execute(f'''INSERT INTO {table}(json)
+                                VALUES('{config}')''')
 
         self.connection.commit()
