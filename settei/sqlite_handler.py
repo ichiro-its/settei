@@ -19,26 +19,28 @@
 # THE SOFTWARE.
 
 
-from sqlite3 import Connection, Cursor, connect
+from sqlite3 import Connection, Cursor, Row, connect
 from typing import Union
 
 
 class SqliteHandler():
     def __init__(self, database):
         self.connection: Connection = connect(database)
+        self.connection.row_factory = Row
         self.cursor: Cursor = self.connection.cursor()
 
     def load(self, table: str) -> Union[str, None]:
         try:
-            self.cursor.execute(f'SELECT * FROM {table} ORDER BY created_at DESC')
+            self.cursor.execute(f'SELECT json FROM {table} ORDER BY id DESC')
 
-            return self.cursor.fetchone()
+            return self.cursor.fetchone()['json']
         except Exception as e:
             print('Exception: {}'.format(e))
 
     def save(self, table: str, config: str) -> None:
         self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table} (
-                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP PRIMARY KEY,
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                 json TEXT NOT NULL)''')
 
         self.cursor.execute(f'''INSERT INTO {table}(json)
