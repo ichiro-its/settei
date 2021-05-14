@@ -23,7 +23,7 @@ from sqlite3 import Connection, Cursor, Row, connect
 
 
 class SqliteHandler():
-    def __init__(self, database):
+    def __init__(self, database: str):
         self.connection: Connection = connect(database)
         self.connection.row_factory = Row
         self.cursor: Cursor = self.connection.cursor()
