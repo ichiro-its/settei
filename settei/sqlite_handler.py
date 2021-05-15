@@ -18,5 +18,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# flake8: noqa
-from settei.sqlite_handler import SqliteHandler
+
+from sqlite3 import Connection, Cursor, Row, connect
+
+
+class SqliteHandler():
+    def __init__(self, database: str):
+        self.connection: Connection = connect(database)
+        self.connection.row_factory = Row
+        self.cursor: Cursor = self.connection.cursor()
+
+    def load(self, table: str) -> str:
+        self.cursor.execute(f'SELECT json FROM {table} ORDER BY id DESC LIMIT 1')
+
+        return self.cursor.fetchone()['json']
+
+    def save(self, table: str, config: str) -> None:
+        self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table} (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                json TEXT NOT NULL)''')
+
+        self.cursor.execute(f'''INSERT INTO {table}(json)
+                                VALUES('{config}')''')
+
+        self.connection.commit()

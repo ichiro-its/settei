@@ -18,5 +18,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# flake8: noqa
-from settei.sqlite_handler import SqliteHandler
+
+from settei import SqliteHandler
+
+
+def test_sqlite():
+    sqlite_handler = SqliteHandler(':memory:')
+
+    sqlite_handler.save('new_table', 'hello world!')
+    assert sqlite_handler.load('new_table') == 'hello world!'
+
+    sqlite_handler.save('new_table', 'newest record!')
+    assert sqlite_handler.load('new_table') == 'newest record!'
