@@ -18,7 +18,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# flake8: noqa
-from settei.sqlite_handler import SqliteHandler
-from settei.set_data_service import SetDataService
-from settei.get_data_service import GetDataService
+
+from settei import SetDataService
+
+import rclpy
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    set_data_service = SetDataService()
+    rclpy.spin(set_data_service)
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
