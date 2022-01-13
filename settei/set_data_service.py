@@ -32,7 +32,7 @@ class SetDataService(Node):
         self.srv = self.create_service(SetData, 'set_data', self.set_data_callback)
 
     def set_data_callback(self, request, response):
-        sqlite_handler = SqliteHandler(':memory:')
+        sqlite_handler = SqliteHandler('settei')
 
         sqlite_handler.save(request.package_name, request.json_config)
         response.status = 'success'

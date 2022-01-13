@@ -32,7 +32,7 @@ class GetDataService(Node):
         self.srv = self.create_service(GetData, 'get_data', self.get_data_callback)
 
     def get_data_callback(self, request, response):
-        sqlite_handler = SqliteHandler(':memory:')
+        sqlite_handler = SqliteHandler('settei')
 
         response.json_config = sqlite_handler.load(request.package_name)
         self.get_logger().info('Incoming request for %s get data' % (request.package_name))
