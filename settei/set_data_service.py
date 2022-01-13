@@ -35,7 +35,8 @@ class SetDataService(Node):
         sqlite_handler = SqliteHandler(':memory:')
 
         sqlite_handler.save(request.package_name, request.json_config)
+        response.status = 'success'
 
-        self.get_logger().info('Incoming request for %d to set data' % (request.package_name))
+        self.get_logger().info('Incoming request for %s to set data' % (request.package_name))
 
         return response

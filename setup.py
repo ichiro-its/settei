@@ -22,7 +22,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'service = settei.main_test:main',
+            'service = settei.main:main',
         ],
     },
 )

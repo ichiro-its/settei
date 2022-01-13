@@ -35,6 +35,6 @@ class GetDataService(Node):
         sqlite_handler = SqliteHandler(':memory:')
 
         response.json_config = sqlite_handler.load(request.package_name)
-        self.get_logger().info('Incoming request for %d get data' % (request.package_name))
+        self.get_logger().info('Incoming request for %s get data' % (request.package_name))
 
         return response
