@@ -18,7 +18,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# flake8: noqa
-from settei.sqlite_handler import SqliteHandler
-from settei.set_data_service import SetDataService
-from settei.get_data_service import GetDataService
+
+from settei_interfaces.srv import SetData
+
+from rclpy.node import Node
+from settei import SqliteHandler
+
+
+class SetDataService(Node):
+
+    def __init__(self):
+        super().__init__('update_data_service')
+        self.srv = self.create_service(SetData, 'set_data', self.set_data_callback)
+
+    def set_data_callback(self, request, response):
+        sqlite_handler = SqliteHandler('settei')
+
+        sqlite_handler.save(request.package_name, request.json_config)
+        response.status = 'success'
+
+        self.get_logger().info('Incoming request for %s to set data' % (request.package_name))
+
+        return response
