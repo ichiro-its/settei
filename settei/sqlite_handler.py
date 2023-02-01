@@ -28,8 +28,11 @@ class SqliteHandler():
         self.connection.row_factory = Row
         self.cursor: Cursor = self.connection.cursor()
 
-    def load(self, table: str) -> str:
-        self.cursor.execute(f'SELECT json FROM {table} ORDER BY id DESC LIMIT 1')
+    def load(self, table: str, package: str, robot: str, branch: str, filename: str) -> str:
+        self.cursor.execute(f'''SELECT json FROM {table} 
+                                WHERE package='{package}' AND robot='{robot}' AND branch='{branch}' AND filename='{filename}'
+                                ORDER BY datetime DESC LIMIT 1 
+                            ''')
 
         return self.cursor.fetchone()['json']
 
