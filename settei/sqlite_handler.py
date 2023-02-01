@@ -36,8 +36,12 @@ class SqliteHandler():
     def save(self, table: str, config: str) -> None:
         self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table} (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                json TEXT NOT NULL)''')
+                                package TEXT NOT NULL,
+                                robot TEXT NOT NULL,
+                                branch TEXT NOT NULL,
+                                filename TEXT NOT NULL,
+                                json TEXT NOT NULL,
+                                datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
 
         self.cursor.execute(f'''INSERT INTO {table}(json)
                                 VALUES('{config}')''')
