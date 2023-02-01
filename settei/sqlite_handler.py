@@ -33,7 +33,7 @@ class SqliteHandler():
 
         return self.cursor.fetchone()['json']
 
-    def save(self, table: str, config: str) -> None:
+    def save(self, table: str, package: str, robot: str, branch: str, filename: str, json:str) -> None:
         self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table} (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 package TEXT NOT NULL,
@@ -43,7 +43,7 @@ class SqliteHandler():
                                 json TEXT NOT NULL,
                                 datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
 
-        self.cursor.execute(f'''INSERT INTO {table}(json)
-                                VALUES('{config}')''')
+        self.cursor.execute(f'''INSERT INTO {table} (package, robot, branch, filename, json)
+                                VALUES('{package}', '{robot}', '{branch}', '{filename}', '{json}')''')
 
         self.connection.commit()
