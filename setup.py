@@ -20,4 +20,9 @@ setup(
     description='Configuration server project',
     license='MIT License',
     tests_require=['pytest'],
+    entry_points={
+        'console_scripts': [
+            'main = settei.data_provider:main',
+        ],
+    },
 )
