@@ -23,10 +23,12 @@ from settei import SqliteHandler
 
 
 def test_sqlite():
-    sqlite_handler = SqliteHandler(':memory:')
+    sqlite_handler = SqliteHandler(":memory:")
 
-    sqlite_handler.save('new_table', 'hello world!')
-    assert sqlite_handler.load('new_table') == 'hello world!'
-
-    sqlite_handler.save('new_table', 'newest record!')
-    assert sqlite_handler.load('new_table') == 'newest record!'
+    sqlite_handler.save(
+        "config", "tachimawari", "miru", "master", "config.json", "{\"a\":\"1\"}"
+    )
+    assert (
+        sqlite_handler.load("config", "tachimawari", "miru", "master", "config.json")
+        == "{\"a\":\"1\"}"
+    )

@@ -6,6 +6,9 @@
   <description>Configuration server project</description>
   <maintainer email="segara2410@gmail.com">Segara Bhagas Dagsapurwa</maintainer>
   <license>MIT License</license>
+  
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>settei_interfaces</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
