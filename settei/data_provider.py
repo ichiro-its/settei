@@ -24,24 +24,43 @@ from rclpy.node import Node
 from settei_interfaces.srv import GetData
 from settei_interfaces.srv import SetData
 
-class DataProvider (Node):
+
+class DataProvider(Node):
     def __init__(self, node_name: str):
         super().__init__(node_name)
 
         self.handler = SqliteHandler("settei")
 
-        self.set_data_srv = self.create_service(SetData, 'set_data', self.set_data_callback)
-        self.get_data_srv = self.create_service(GetData, 'get_data', self.get_data_callback)
+        self.set_data_srv = self.create_service(
+            SetData, "set_data", self.set_data_callback
+        )
+        self.get_data_srv = self.create_service(
+            GetData, "get_data", self.get_data_callback
+        )
 
     def get_data_callback(self, request, response):
-        response.json_config = self.handler.load("config", request.package_name, request.robot_name, request.branch, request.file_name)
-        
+        response.json_config = self.handler.load(
+            "config",
+            request.package_name,
+            request.robot_name,
+            request.branch,
+            request.file_name,
+        )
+
         return response
 
     def set_data_callback(self, request, response):
-        self.handler.save("config", request.package_name, request.robot_name, request.branch, request.file_name, request.json_config)
-        
+        self.handler.save(
+            "config",
+            request.package_name,
+            request.robot_name,
+            request.branch,
+            request.file_name,
+            request.json_config,
+        )
+
         return response
+
 
 def main(args=None):
     try:
@@ -55,5 +74,6 @@ def main(args=None):
     except Exception as e:
         print(e)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

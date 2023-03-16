@@ -22,31 +22,51 @@
 from sqlite3 import Connection, Cursor, Row, connect
 
 
-class SqliteHandler():
+class SqliteHandler:
     def __init__(self, database: str):
         self.connection: Connection = connect(database)
         self.connection.row_factory = Row
         self.cursor: Cursor = self.connection.cursor()
 
-    def load(self, table: str, package: str, robot: str, branch: str, filename: str) -> str:
-        self.cursor.execute(f'''SELECT json FROM {table} 
-                                WHERE package='{package}' AND robot='{robot}' AND branch='{branch}' AND filename='{filename}'
-                                ORDER BY datetime DESC LIMIT 1 
-                            ''')
+    def load(
+        self, table: str, package: str, robot: str, branch: str, filename: str
+    ) -> str:
+        self.cursor.execute(
+            f"""SELECT json FROM {table}
+                WHERE package='{package}' AND robot='{robot}'
+                AND branch='{branch}'
+                AND filename='{filename}'
+                ORDER BY datetime DESC LIMIT 1
+            """
+        )
 
-        return self.cursor.fetchone()['json']
+        return self.cursor.fetchone()["json"]
 
-    def save(self, table: str, package: str, robot: str, branch: str, filename: str, json:str) -> None:
-        self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table} (
+    def save(
+        self,
+        table: str,
+        package: str,
+        robot: str,
+        branch: str,
+        filename: str,
+        json: str,
+    ) -> None:
+        self.cursor.execute(
+            f"""CREATE TABLE IF NOT EXISTS {table} (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 package TEXT NOT NULL,
                                 robot TEXT NOT NULL,
                                 branch TEXT NOT NULL,
                                 filename TEXT NOT NULL,
                                 json TEXT NOT NULL,
-                                datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+                                datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
+            """
+        )
 
-        self.cursor.execute(f'''INSERT INTO {table} (package, robot, branch, filename, json)
-                                VALUES('{package}', '{robot}', '{branch}', '{filename}', '{json}')''')
+        self.cursor.execute(
+            f"""INSERT INTO {table} (package, robot, branch, filename, json)
+                VALUES('{package}', '{robot}', '{branch}','{filename}', '{json}')
+            """
+        )
 
         self.connection.commit()
